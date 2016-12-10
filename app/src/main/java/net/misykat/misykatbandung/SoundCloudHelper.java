@@ -1,5 +1,7 @@
 package net.misykat.misykatbandung;
 
+import net.misykat.misykatbandung.data.Track;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,14 +13,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SoundCloudHelper {
     // XXX: sementara menggunakan soundcloud.com client_id karena
     // belum dapet dari soundcloudnya
-    private static String CLIENT_ID = "fDoItMDbsbZz8dY16ZzARCZmzgHBPotA";
-    private static String BASE_URL = "https://api-v2.soundcloud.com/";
-    private static String USER_ID = "170413650";
-    private JSONObject getTracks() throws IOException, JSONException {
+    public static String CLIENT_ID = "fDoItMDbsbZz8dY16ZzARCZmzgHBPotA";
+    public static String BASE_URL = "https://api-v2.soundcloud.com/";
+    public static String USER_ID = "170413650";
+    private JSONObject getTracksJson() throws IOException, JSONException {
         URL url = null;
         try {
             url = new URL(BASE_URL + "/users/" + USER_ID + "/tracks?client_id=" + CLIENT_ID);
@@ -42,5 +46,9 @@ public class SoundCloudHelper {
         } finally {
             urlConnection.disconnect();
         }
+    }
+
+    public List<Track> getTracks() {
+        return new ArrayList<>();
     }
 }
