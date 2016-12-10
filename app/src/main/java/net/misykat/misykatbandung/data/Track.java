@@ -46,7 +46,6 @@ public class Track {
     release_date : None
     tag_list : Blues Pop
     embeddable_by : all
-
      */
 
     String id;
