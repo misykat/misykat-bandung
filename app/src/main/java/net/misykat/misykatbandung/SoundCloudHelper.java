@@ -26,7 +26,7 @@ public class SoundCloudHelper {
     private JSONObject getTracksJson() throws IOException, JSONException {
         URL url = null;
         try {
-            url = new URL(BASE_URL + "/users/" + USER_ID + "/tracks?client_id=" + CLIENT_ID);
+            url = new URL(BASE_URL + "users/" + USER_ID + "/tracks?client_id=" + CLIENT_ID);
         } catch (MalformedURLException e) {
             // nggak mungkin, jadi throw lagi dengan runtime exception
             throw new RuntimeException(e);
