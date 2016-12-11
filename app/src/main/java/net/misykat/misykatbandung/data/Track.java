@@ -154,6 +154,10 @@ public class Track {
         return uri + "&clientId" + SoundCloudHelper.CLIENT_ID;
     }
 
+    public Calendar getCreatedAt() {
+        return createdAt;
+    }
+
     public static Track fromJson(JSONObject o) {
         Track t = new Track();
 

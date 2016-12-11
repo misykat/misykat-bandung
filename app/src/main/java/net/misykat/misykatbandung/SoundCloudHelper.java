@@ -1,5 +1,7 @@
 package net.misykat.misykatbandung;
 
+import android.util.Log;
+
 import net.misykat.misykatbandung.data.Track;
 
 import org.json.JSONArray;
@@ -26,12 +28,13 @@ public class SoundCloudHelper {
     private JSONObject getTracksJson() throws IOException, JSONException {
         URL url = null;
         try {
-            url = new URL(BASE_URL + "users/" + USER_ID + "/tracks?client_id=" + CLIENT_ID);
+            url = new URL(BASE_URL + "users/" + USER_ID + "/tracks?limit=2000&client_id=" + CLIENT_ID);
         } catch (MalformedURLException e) {
             // nggak mungkin, jadi throw lagi dengan runtime exception
             throw new RuntimeException(e);
         }
         HttpURLConnection urlConnection = null;
+        Log.d(getClass().getName(), "Downloading tracks from SoundCloud");
         urlConnection = (HttpURLConnection) url.openConnection();
         try {
             // json is UTF-8 by default
@@ -50,6 +53,7 @@ public class SoundCloudHelper {
     }
 
     public List<Track> getTracks() throws JSONException, IOException {
+        Log.d(getClass().getName(), "Reading Json");
         JSONObject o = getTracksJson();
         JSONArray arr = o.getJSONArray("collection");
 
@@ -57,6 +61,8 @@ public class SoundCloudHelper {
         for (int i=0; i<arr.length(); i++) {
             ret.add(Track.fromJson(arr.getJSONObject(i)));
         }
+
+        Log.d(getClass().getName(), "Got " + arr.length() + " tracks");
 
         return ret;
     }
