@@ -2,6 +2,7 @@ package net.misykat.misykatbandung;
 
 import net.misykat.misykatbandung.data.Track;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,7 +49,15 @@ public class SoundCloudHelper {
         }
     }
 
-    public List<Track> getTracks() {
-        return new ArrayList<>();
+    public List<Track> getTracks() throws JSONException, IOException {
+        JSONObject o = getTracksJson();
+        JSONArray arr = o.getJSONArray("collection");
+
+        ArrayList<Track> ret = new ArrayList<>();
+        for (int i=0; i<arr.length(); i++) {
+            ret.add(Track.fromJson(arr.getJSONObject(i)));
+        }
+
+        return ret;
     }
 }

@@ -1,6 +1,15 @@
 package net.misykat.misykatbandung.data;
 
 import net.misykat.misykatbandung.SoundCloudHelper;
+import net.misykat.misykatbandung.util.ISO8601;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Track {
     /* JSON:
@@ -54,16 +63,20 @@ public class Track {
     String title;
     String waveformUrl;
     String urn;
-    String lastModified;
+    Calendar lastModified;
+    Calendar createdAt;
     String genre;
     String permalinkUrl;
     String uri;
     String artworkUrl;
     Integer fullDuration;
 
-    public Track(String id, String fullTitle, String waveformUrl, String urn, String lastModified, String genre, String permalinkUrl, String uri, String artworkUrl, Integer fullDuration) {
+    private Track() {
+    }
+
+    public Track(String id, String fullTitle, String waveformUrl, String urn, Calendar lastModified, String genre, String permalinkUrl, String uri, String artworkUrl, Integer fullDuration, Calendar createdAt) {
         this.id = id;
-        this.fullTitle = fullTitle;
+
         this.waveformUrl = waveformUrl;
         this.urn = urn;
         this.lastModified = lastModified;
@@ -73,6 +86,13 @@ public class Track {
         this.artworkUrl = artworkUrl;
         this.fullDuration = fullDuration;
 
+        this.createdAt = createdAt;
+
+        setFullTitle(fullTitle);
+    }
+
+    void setFullTitle(String fullTitle) {
+        this.fullTitle = fullTitle;
         if (fullTitle.contains(":")) {
             String[] titles = fullTitle.split(":");
             speakerName = titles[0].trim();
@@ -106,7 +126,7 @@ public class Track {
         return urn;
     }
 
-    public String getLastModified() {
+    public Calendar getLastModified() {
         return lastModified;
     }
 
@@ -132,5 +152,50 @@ public class Track {
 
     public String getStreamUrl() {
         return uri + "&clientId" + SoundCloudHelper.CLIENT_ID;
+    }
+
+    public static Track fromJson(JSONObject o) {
+        Track t = new Track();
+
+        t.id = getString(o, "id");
+        t.artworkUrl = getString(o, "artwork_url");
+        t.fullDuration = getInteger(o, "full_duration");
+        t.setFullTitle(getString(o, "title"));
+        t.waveformUrl = getString(o, "waveform_url");
+        t.urn = getString(o, "urn");
+        t.uri = getString(o, "uri");
+        t.lastModified = getCalendar(o, "last_modified");
+        t.createdAt = getCalendar(o, "created_at");
+        t.genre = getString(o, "genre");
+        t.permalinkUrl = getString(o, "permalink_url");
+
+        return t;
+    }
+
+    private static Calendar getCalendar(JSONObject o, String attr) {
+        try {
+            return ISO8601.toCalendar(o.getString(attr));
+        } catch (JSONException e) {
+            return null;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static Integer getInteger(JSONObject o, String attr) {
+        try {
+            return o.getInt(attr);
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    public static String getString(JSONObject o, String attr) {
+        try {
+            return o.getString(attr);
+        } catch (JSONException e) {
+            return null;
+        }
     }
 }
