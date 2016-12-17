@@ -97,6 +97,14 @@ public class Track {
             String[] titles = fullTitle.split(":");
             speakerName = titles[0].trim();
             title = titles[1].trim();
+        } else if (fullTitle.contains(";")) {
+            String[] titles = fullTitle.split(";");
+            speakerName = titles[0].trim();
+            title = titles[1].trim();
+        } else if (fullTitle.contains(" - ")) {
+            String[] titles = fullTitle.split("-");
+            speakerName = titles[0].trim();
+            title = titles[1].trim();
         } else {
             title = fullTitle;
         }
