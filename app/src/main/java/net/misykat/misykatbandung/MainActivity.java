@@ -38,7 +38,7 @@ import java.util.WeakHashMap;
 public class MainActivity extends AppCompatActivity {
     SoundCloudHelper helper = new SoundCloudHelper();
     List<Track> tracks = new ArrayList<>();
-    DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();
+    DateFormat dateFormat = SimpleDateFormat.getDateInstance();
 
     public class TracksListArrayAdapter extends ArrayAdapter<Track> {
         Context context = MainActivity.this;
@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
             }
             date.setText(dateFormat.format(track.getCreatedAt().getTime()));
 
-            new DownloadImageTask(imageView)
-                    .execute(track.getArtworkUrl());
+            new DownloadImageTask(imageView, track.getArtworkUrl(), track.getSpeakerName())
+                    .execute();
 
             return rowView;
         }
@@ -88,22 +88,33 @@ public class MainActivity extends AppCompatActivity {
 
     static WeakHashMap<String, Bitmap> bitmaps = new WeakHashMap<>();
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        private final String speakerName;
         ImageView bmImage;
+        String urlDisplay;
 
-        public DownloadImageTask(ImageView bmImage) {
+        public DownloadImageTask(ImageView bmImage, String urlDisplay, String speakerName) {
             this.bmImage = bmImage;
+            this.urlDisplay = urlDisplay;
+            this.speakerName = speakerName;
+
+            // kalau bitmap ada, set dulu
+            Bitmap bitmap = bitmaps.get(speakerName);
+            if (bitmap != null) {
+                bmImage.setImageBitmap(bitmap);
+            } else {
+                bmImage.setImageResource(R.mipmap.ic_launcher);
+            }
         }
 
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = bitmaps.get(urldisplay);
+        protected Bitmap doInBackground(String... params) {
+            Bitmap mIcon11 = bitmaps.get(urlDisplay);
             if (mIcon11 == null) {
                 // TODO: kalau ada beberapa yang bersamaan mengambil
                 //       URL yang sama, satu saja yang ambil
                 try {
-                    InputStream in = new URL(urldisplay).openStream();
+                    InputStream in = new URL(urlDisplay).openStream();
                     mIcon11 = BitmapFactory.decodeStream(in);
-                    bitmaps.put(urldisplay, mIcon11);
+                    bitmaps.put(speakerName, mIcon11);
                 } catch (Exception e) {
                     Log.e("Error", e.getMessage());
                     e.printStackTrace();
@@ -122,7 +133,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new LoadTracksTask().execute();
+        if (this.tracks == null || this.tracks.size() == 0) {
+            new LoadTracksTask().execute();
+        }
     }
 
     class LoadTracksTask extends AsyncTask<String, Void, List<Track>> {
