@@ -11,9 +11,11 @@
     tools:context="net.misykat.misykatbandung.MainActivity">
 
     <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/progressBar" />
+        android:id="@+id/progressBar"
+        android:padding="100dp" />
 
     <ListView
         android:layout_width="match_parent"
