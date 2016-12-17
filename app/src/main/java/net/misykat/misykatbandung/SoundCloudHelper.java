@@ -25,10 +25,10 @@ public class SoundCloudHelper {
     public static String CLIENT_ID = "fDoItMDbsbZz8dY16ZzARCZmzgHBPotA";
     public static String BASE_URL = "https://api-v2.soundcloud.com/";
     public static String USER_ID = "170413650";
-    private JSONObject getTracksJson() throws IOException, JSONException {
+    private JSONObject getTracksJson(int offset, int num) throws IOException, JSONException {
         URL url = null;
         try {
-            url = new URL(BASE_URL + "users/" + USER_ID + "/tracks?limit=2000&client_id=" + CLIENT_ID);
+            url = new URL(BASE_URL + "users/" + USER_ID + "/tracks?limit=" + num + "&client_id=" + CLIENT_ID + "&offset=" + offset);
         } catch (MalformedURLException e) {
             // nggak mungkin, jadi throw lagi dengan runtime exception
             throw new RuntimeException(e);
@@ -54,7 +54,8 @@ public class SoundCloudHelper {
 
     public List<Track> getTracks() throws JSONException, IOException {
         Log.d(getClass().getName(), "Reading Json");
-        JSONObject o = getTracksJson();
+        JSONObject o = getTracksJson(0,200);
+        JSONObject o2 = getTracksJson(200,200); // TODO: saat ini diasumsikan maks 400 tracks yang ada
         JSONArray arr = o.getJSONArray("collection");
 
         ArrayList<Track> ret = new ArrayList<>();
